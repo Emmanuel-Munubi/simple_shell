@@ -1,28 +1,36 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "shell.h"
 
-void prompt(char *readBuff, size_t buffer);
-
-int main() {
+/**
+ * main - entry point
+ *
+ * Return: 0 on success
+ */
+int main(void)
+{
 	int true = 1;
 	size_t BUFFSIZE = 100;
 	char *readBuff = malloc(BUFFSIZE);
-	memset(readBuff, '\0', BUFFSIZE);
-	char *exit = "exit";
+	char *__exit = "exit";
 
-	while(true) {
+	memset(readBuff, '\0', BUFFSIZE);
+
+	while (true)
+	{
 		prompt(readBuff, BUFFSIZE);
-		if (strcmp(readBuff, exit) == 0) {
-			break;
-		}
-		printf("readBuff: %s\n", readBuff);
+		/*parse the buffer*/
+		/*execute the command*/
 	}
 	printf("readBuff: %s\n", readBuff);
 	return (0);
 }
 
-void prompt(char *readBuff, size_t buffer) {
+/**
+ * prompt - prints a prompt and reads a line
+ * @readBuff: buffer to read into
+ * @buffer: size of buffer
+ */
+void prompt(char *readBuff, size_t buffer)
+{
 	printf("$ ");
 	getline(&readBuff, &buffer, stdin);
 }
