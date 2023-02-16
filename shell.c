@@ -10,7 +10,6 @@ int main(void)
 	int true = 1;
 	size_t BUFFSIZE = 100;
 	char *readBuff = malloc(BUFFSIZE);
-	char *__exit = "exit";
 
 	memset(readBuff, '\0', BUFFSIZE);
 
