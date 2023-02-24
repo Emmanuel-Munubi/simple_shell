@@ -1,35 +1,90 @@
 #include "shell.h"
 
 /**
- * main - entry point
- *
- * Return: 0 on success
+ * main - simple shell entry point
+ * @argc: argument count
+ * @argv: argument value
+ * Return: exit value by status
  */
-int main(void)
+
+int main(__attribute__((unused)) int argc, char **argv)
 {
-	int true = 1;
-	size_t BUFFSIZE = 100;
-	char *readBuff = malloc(BUFFSIZE);
+	char *input, **cmd;
+	int counter = 0, status = 1, st = 0;
 
-	memset(readBuff, '\0', BUFFSIZE);
-
-	while (true)
+	if (argv[1] != NULL)
+		read_file(argv[1], argv);
+	signal(SIGINT, signal_to_handel);
+	while (status)
 	{
-		prompt(readBuff, BUFFSIZE);
-		/*parse the buffer*/
-		/*execute the command*/
-	}
-	printf("readBuff: %s\n", readBuff);
-	return (0);
-}
+		counter++;
+		if (isatty(STDIN_FILENO))
+			prompt();
+		input = _getline();
+		if (input[0] == '\0')
+		{
+			continue;
+		}
+		history(input);
+		cmd = parse_cmd(input);
+		if (_strcmp(cmd[0], "exit") == 0)
+		{
+			exit_bul(cmd, input, argv, counter);
+		}
+		else if (check_builtin(cmd) == 0)
+		{
+			st = handle_builtin(cmd, st);
+			free_all(cmd, input);
+			continue;
+		}
+		else
+		{
+			st = check_cmd(cmd, input, counter, argv);
 
+		}
+		free_all(cmd, input);
+	}
+	return (status);
+}
 /**
- * prompt - prints a prompt and reads a line
- * @readBuff: buffer to read into
- * @buffer: size of buffer
+ * check_builtin - check builtin
+ *
+ * @cmd:command to check
+ * Return: 0 Succes -1 Fail
  */
-void prompt(char *readBuff, size_t buffer)
+int check_builtin(char **cmd)
 {
-	printf("$ ");
-	getline(&readBuff, &buffer, stdin);
+	bul_t fun[] = {
+		{"cd", NULL},
+		{"help", NULL},
+		{"echo", NULL},
+		{"history", NULL},
+		{NULL, NULL}
+	};
+	int i = 0;
+		if (*cmd == NULL)
+	{
+		return (-1);
+	}
+
+	while ((fun + i)->command)
+	{
+		if (_strcmp(cmd[0], (fun + i)->command) == 0)
+			return (0);
+		i++;
+	}
+	return (-1);
+}
+/**
+ * creat_envi - Creat Array of Enviroment Variable
+ * @envi: Array of Enviroment Variable
+ * Return: Void
+ */
+void creat_envi(char **envi)
+{
+	int i;
+
+	for (i = 0; environ[i]; i++)
+		envi[i] = _strdup(environ[i]);
+	envi[i] = NULL;
 }
